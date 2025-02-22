@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+<<<<<<< HEAD
+		<key>Bare Creek Guide.xcscheme_^#shared#^_</key>
+=======
+		<key>Bare Creek Safety Officer.xcscheme_^#shared#^_</key>
+>>>>>>> main
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+<<<<<<< HEAD
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>66AECC8A2D69C63700540817</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+=======
+>>>>>>> main
+</dict>
+</plist>
