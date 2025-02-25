@@ -46,12 +46,14 @@ struct HistoricalWeatherSection: View {
                         .foregroundColor(.gray)
                         .frame(width: windWidth, alignment: .leading)
                     
+                    /**
                     // Direction column
                     Image(systemName: "location.north")
                         .rotationEffect(.degrees(45))
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .frame(width: dirWidth, alignment: .center)
+                    **/
                     
                     // Rain column
                     Image(systemName: "cloud.rain")
@@ -76,10 +78,12 @@ struct HistoricalWeatherSection: View {
                             .font(.subheadline)
                             .frame(width: windWidth, alignment: .leading)
                         
+                        /**
                         // Wind direction
                         Text(reading.wind_dir)
                             .font(.subheadline)
                             .frame(width: dirWidth, alignment: .center)
+                        **/
                         
                         // Rain with unit
                         if reading.rain_trace_string == "-" {
