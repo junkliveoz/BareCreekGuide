@@ -4,14 +4,18 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+<<<<<<< HEAD
 		<key>Bare Creek Guide.xcscheme_^#shared#^_</key>
 		<key>Bare Creek Safety Officer.xcscheme_^#shared#^_</key>
+=======
+>>>>>>> main
 		<key>Bare Creek Safety Officer.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
 	</dict>
+<<<<<<< HEAD
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>66AECC8A2D69C63700540817</key>
@@ -20,5 +24,7 @@
 			<true/>
 		</dict>
 	</dict>
+=======
+>>>>>>> main
 </dict>
 </plist>

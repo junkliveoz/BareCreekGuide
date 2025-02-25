@@ -47,14 +47,14 @@ struct HistoricalWeatherSection: View {
                         .frame(width: windWidth, alignment: .leading)
                     
                     // Direction column
-                    Image(systemName: "location.north.fill")
+                    Image(systemName: "location.north")
                         .rotationEffect(.degrees(45))
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .frame(width: dirWidth, alignment: .center)
                     
                     // Rain column
-                    Image(systemName: "drop.fill")
+                    Image(systemName: "cloud.rain")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .frame(width: rainWidth, alignment: .leading)
