@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		66AECC8B2D69C63700540817 /* Bare Creek Safety Officer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bare Creek Safety Officer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66AECC8B2D69C63700540817 /* Bare Creek Guide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bare Creek Guide.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		66AECC8D2D69C63700540817 /* Bare Creek Safety Officer */ = {
+		66AECC8D2D69C63700540817 /* Bare Creek Guide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Bare Creek Safety Officer";
+			path = "Bare Creek Guide";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		66AECC822D69C63700540817 = {
 			isa = PBXGroup;
 			children = (
-				66AECC8D2D69C63700540817 /* Bare Creek Safety Officer */,
+				66AECC8D2D69C63700540817 /* Bare Creek Guide */,
 				66AECC8C2D69C63700540817 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		66AECC8C2D69C63700540817 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				66AECC8B2D69C63700540817 /* Bare Creek Safety Officer.app */,
+				66AECC8B2D69C63700540817 /* Bare Creek Guide.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		66AECC8A2D69C63700540817 /* Bare Creek Safety Officer */ = {
+		66AECC8A2D69C63700540817 /* Bare Creek Guide */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 66AECC992D69C63800540817 /* Build configuration list for PBXNativeTarget "Bare Creek Safety Officer" */;
+			buildConfigurationList = 66AECC992D69C63800540817 /* Build configuration list for PBXNativeTarget "Bare Creek Guide" */;
 			buildPhases = (
 				66AECC872D69C63700540817 /* Sources */,
 				66AECC882D69C63700540817 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				66AECC8D2D69C63700540817 /* Bare Creek Safety Officer */,
+				66AECC8D2D69C63700540817 /* Bare Creek Guide */,
 			);
-			name = "Bare Creek Safety Officer";
+			name = "Bare Creek Guide";
 			packageProductDependencies = (
 			);
 			productName = "Bare Creek Safety Officer";
-			productReference = 66AECC8B2D69C63700540817 /* Bare Creek Safety Officer.app */;
+			productReference = 66AECC8B2D69C63700540817 /* Bare Creek Guide.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 66AECC862D69C63700540817 /* Build configuration list for PBXProject "Bare Creek Safety Officer" */;
+			buildConfigurationList = 66AECC862D69C63700540817 /* Build configuration list for PBXProject "Bare Creek Guide" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				66AECC8A2D69C63700540817 /* Bare Creek Safety Officer */,
+				66AECC8A2D69C63700540817 /* Bare Creek Guide */,
 			);
 		};
 /* End PBXProject section */
@@ -311,7 +311,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		66AECC862D69C63700540817 /* Build configuration list for PBXProject "Bare Creek Safety Officer" */ = {
+		66AECC862D69C63700540817 /* Build configuration list for PBXProject "Bare Creek Guide" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66AECC972D69C63800540817 /* Debug */,
@@ -320,7 +320,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		66AECC992D69C63800540817 /* Build configuration list for PBXNativeTarget "Bare Creek Safety Officer" */ = {
+		66AECC992D69C63800540817 /* Build configuration list for PBXNativeTarget "Bare Creek Guide" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66AECC9A2D69C63800540817 /* Debug */,

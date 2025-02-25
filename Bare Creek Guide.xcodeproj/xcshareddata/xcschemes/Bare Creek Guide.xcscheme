@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66AECC8A2D69C63700540817"
-               BuildableName = "Bare Creek Safety Officer.app"
-               BlueprintName = "Bare Creek Safety Officer"
-               ReferencedContainer = "container:Bare Creek Safety Officer.xcodeproj">
+               BuildableName = "Bare Creek Guide.app"
+               BlueprintName = "Bare Creek Guide"
+               ReferencedContainer = "container:Bare Creek Guide.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66AECC8A2D69C63700540817"
-            BuildableName = "Bare Creek Safety Officer.app"
-            BlueprintName = "Bare Creek Safety Officer"
-            ReferencedContainer = "container:Bare Creek Safety Officer.xcodeproj">
+            BuildableName = "Bare Creek Guide.app"
+            BlueprintName = "Bare Creek Guide"
+            ReferencedContainer = "container:Bare Creek Guide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66AECC8A2D69C63700540817"
-            BuildableName = "Bare Creek Safety Officer.app"
-            BlueprintName = "Bare Creek Safety Officer"
-            ReferencedContainer = "container:Bare Creek Safety Officer.xcodeproj">
+            BuildableName = "Bare Creek Guide.app"
+            BlueprintName = "Bare Creek Guide"
+            ReferencedContainer = "container:Bare Creek Guide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
