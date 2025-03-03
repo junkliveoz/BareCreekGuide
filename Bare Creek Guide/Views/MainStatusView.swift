@@ -18,34 +18,32 @@ struct ParkStatusView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    StatusHeaderView(
-                        currentTime: currentTime,
-                        parkStatus: viewModel.parkStatus,
-                        currentWeather: viewModel.currentWeather,
-                        isLoading: viewModel.isLoading,
-                        isInitialLoad: viewModel.isInitialLoad,
-                        twoDayRainTotal: viewModel.twoDayRainTotal
-                    )
-                    
-                    WeatherDataView(
-                        currentWeather: viewModel.currentWeather,
-                        weatherHistory: viewModel.weatherHistory,
-                        isLoading: viewModel.isLoading
-                    )
-                }
-                .padding(.horizontal)
+        ScrollView {
+            VStack(spacing: 20) {
+                StatusHeaderView(
+                    currentTime: currentTime,
+                    parkStatus: viewModel.parkStatus,
+                    currentWeather: viewModel.currentWeather,
+                    isLoading: viewModel.isLoading,
+                    isInitialLoad: viewModel.isInitialLoad,
+                    twoDayRainTotal: viewModel.twoDayRainTotal
+                )
+                
+                WeatherDataView(
+                    currentWeather: viewModel.currentWeather,
+                    weatherHistory: viewModel.weatherHistory,
+                    isLoading: viewModel.isLoading
+                )
             }
-            .refreshable {
-                await viewModel.fetchLatestWeatherAsync()
-            }
-            .onReceive(timer) { input in
-                currentTime = input
-            }
-            .navigationTitle("Bare Creek Status")
+            .padding(.horizontal)
         }
+        .refreshable {
+            await viewModel.fetchLatestWeatherAsync()
+        }
+        .onReceive(timer) { input in
+            currentTime = input
+        }
+        .navigationTitle("Bare Creek Status")
     }
 }
 

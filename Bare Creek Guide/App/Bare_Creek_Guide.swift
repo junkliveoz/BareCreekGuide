@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct Bare_Creek_GuideApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    
     var body: some Scene {
         WindowGroup {
             SplashScreen()

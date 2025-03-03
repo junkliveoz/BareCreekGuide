@@ -10,34 +10,56 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = ParkStatusViewModel()
     @State private var selectedTab = 0
+    @State private var showSettings = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // Park Status Tab
-            ParkStatusView(viewModel: viewModel)
-                .tabItem {
-                    Image(systemName: "cloud.sun.fill")
-                    Text("Conditions")
-                }
-                .tag(0)
+            NavigationView {
+                ParkStatusView(viewModel: viewModel)
+                    .navigationBarItems(trailing: settingsButton)
+            }
+            .tabItem {
+                Image(systemName: "cloud.sun.fill")
+                Text("Conditions")
+            }
+            .tag(0)
             
             // Trails Tab
-            TrailsView(viewModel: viewModel)
-                .tabItem {
-                    Image(systemName: "mountain.2.fill")
-                    Text("Trails")
-                }
-                .tag(1)
+            NavigationView {
+                TrailsView(viewModel: viewModel)
+                    .navigationBarItems(trailing: settingsButton)
+            }
+            .tabItem {
+                Image(systemName: "mountain.2.fill")
+                Text("Trails")
+            }
+            .tag(1)
             
             // Info Tab
-            InfoView()
-                .tabItem {
-                    Image(systemName: "info.circle.fill")
-                    Text("Info")
-                }
-                .tag(2)
+            NavigationView {
+                InfoView()
+                    .navigationBarItems(trailing: settingsButton)
+            }
+            .tabItem {
+                Image(systemName: "info.circle.fill")
+                Text("Info")
+            }
+            .tag(2)
         }
         .accentColor(Color("AccentColor"))
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
+    }
+    
+    private var settingsButton: some View {
+        Button(action: {
+            showSettings = true
+        }) {
+            Image(systemName: "gear")
+                .imageScale(.large)
+        }
     }
 }
 

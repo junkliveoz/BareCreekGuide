@@ -9,6 +9,9 @@ import SwiftUI
 import Combine
 
 class ParkStatusViewModel: ObservableObject {
+    // Add shared instance for access from AppDelegate
+    static let shared = ParkStatusViewModel()
+    
     @Published var currentWeather: WeatherData?
     @Published var weatherHistory: [WeatherData] = []
     @Published var isLoading = true
@@ -18,6 +21,7 @@ class ParkStatusViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let weatherService: WeatherServiceProtocol
+    private let notificationManager = NotificationManager.shared
     private let maxHistoryCount = 10
     private var refreshTimer: Timer?
     
@@ -61,7 +65,8 @@ class ParkStatusViewModel: ObservableObject {
         }
     }
     
-    private var isParkOpenBasedOnTime: Bool {
+    // Make isParkOpenBasedOnTime public so it can be accessed by AppDelegate
+    var isParkOpenBasedOnTime: Bool {
         let calendar = Calendar.current
         let now = Date()
         let components = calendar.dateComponents([.hour, .month], from: now)
@@ -95,8 +100,10 @@ class ParkStatusViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] weatherDataArray in
-                    self?.updateWeatherData(weatherDataArray)
-                    self?.calculateTwoDayRainTotal(weatherDataArray)
+                    guard let self = self else { return }
+                    self.updateWeatherData(weatherDataArray)
+                    self.calculateTwoDayRainTotal(weatherDataArray)
+                    self.processNotifications()
                 }
             )
             .store(in: &cancellables)
@@ -110,6 +117,7 @@ class ParkStatusViewModel: ObservableObject {
             let weatherDataArray = try await weatherService.fetchWeatherDataAsync()
             updateWeatherData(weatherDataArray)
             calculateTwoDayRainTotal(weatherDataArray)
+            processNotifications()
             isLoading = false
             isInitialLoad = false
         } catch {
@@ -119,7 +127,8 @@ class ParkStatusViewModel: ObservableObject {
         }
     }
     
-    private func updateWeatherData(_ newData: [WeatherData]) {
+    // Changed from private to public for background access
+    public func updateWeatherData(_ newData: [WeatherData]) {
         // Update current weather with the latest reading
         currentWeather = newData.first
         
@@ -131,7 +140,17 @@ class ParkStatusViewModel: ObservableObject {
         objectWillChange.send()
     }
     
-    private func calculateTwoDayRainTotal(_ weatherData: [WeatherData]) {
+    private func processNotifications() {
+        notificationManager.processWeatherUpdate(
+            currentWeather: currentWeather,
+            parkStatus: parkStatus,
+            twoDayRainTotal: twoDayRainTotal,
+            isParkOpen: isParkOpenBasedOnTime
+        )
+    }
+    
+    // Changed from private to public for background access
+    public func calculateTwoDayRainTotal(_ weatherData: [WeatherData]) {
         let sortedData = weatherData.sorted { $0.local_date_time_full > $1.local_date_time_full }
         
         // Get the latest valid rain reading for today (ignoring blank/"-" values)
