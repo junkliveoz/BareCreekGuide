@@ -62,10 +62,10 @@ struct StatusMessageView: View {
             Text("Park Open, conditions are too windy for the double black features.")
             
         case .strongWinds:
-            Text("The wind is strong enough for the jump trails, recommend pump track and flow lines only.")
+            Text("The wind is too strong for the jump trails, recommend pump track and flow lines only.")
             
         case .extremeWinds:
-            Text("The wind conditions are too strong to be on the trails.")
+            Text("The wind conditions are too strong to be on all trails and the pump track.")
             
         case .wetConditions:
             HStack(spacing: 4) {

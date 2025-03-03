@@ -21,13 +21,17 @@ struct SplashScreen: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                                    Text("Bare Creek")
-                                        .font(.system(size: 60, weight: .bold))
-                                        .foregroundColor(.white)
-                                    Text("Bike Park")
-                                        .font(.system(size: 42, weight: .bold))
-                                        .foregroundColor(.white)
-                                }
+                    Text("Bare Creek")
+                        .font(.system(size: 60, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("Bike Park")
+                        .font(.system(size: 42, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("Sydney, NSW")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(Color("AccentColor"))
+                }
+                
                 .shadow(color: .black, radius: 6)
             }
             .onAppear {
