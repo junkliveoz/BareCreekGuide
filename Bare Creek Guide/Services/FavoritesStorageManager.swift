@@ -76,6 +76,16 @@ class FavoritesStorageManager: ObservableObject {
         }
     }
     
+    func syncFavorites() {
+            // Implement synchronization logic
+            // For example:
+            loadFavorites()
+            if useCloudKit {
+                loadFavoritesFromiCloud()
+                saveFavoritesToiCloud()
+            }
+        }
+    
     // MARK: - Private Methods
     
     /// Save favorites to UserDefaults and iCloud

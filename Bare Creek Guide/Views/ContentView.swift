@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  Bare Creek Safety Officer
+//  Bare Creek Guide
 //
-//  Created by Adam on 22/2/2025.
+//  Update for MVVM architecture on 11/3/2025
 //
 
 import SwiftUI
@@ -10,14 +10,17 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = ParkStatusViewModel()
     @State private var selectedTab = 0
-    @State private var showSettings = false
+    
+    // Notifications management
+    @StateObject private var notificationsManager = NotificationsManager.shared
+    @State private var showNotifications = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // Park Status Tab
             NavigationView {
                 ParkStatusView(viewModel: viewModel)
-                    .navigationBarItems(trailing: settingsButton)
+                    .navigationBarItems(trailing: notificationsButton)
             }
             .tabItem {
                 Image(systemName: "cloud.sun.fill")
@@ -25,10 +28,9 @@ struct ContentView: View {
             }
             .tag(0)
             
-            // Trails Tab
+            // Trails Tab - Updated to use the new MVVM Trail views
             NavigationView {
-                TrailsView(viewModel: viewModel)
-                    .navigationBarItems(trailing: settingsButton)
+                TrailsView(parkStatusViewModel: viewModel)
             }
             .tabItem {
                 Image(systemName: "mountain.2.fill")
@@ -39,26 +41,49 @@ struct ContentView: View {
             // Info Tab
             NavigationView {
                 InfoView()
-                    .navigationBarItems(trailing: settingsButton)
             }
             .tabItem {
                 Image(systemName: "info.circle.fill")
                 Text("Info")
             }
             .tag(2)
+            
+            // Settings Tab
+            NavigationView {
+                SettingsView()
+            }
+            .tabItem {
+                Image(systemName: "gear")
+                Text("Settings")
+            }
+            .tag(3)
         }
         .accentColor(Color("AccentColor"))
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
+        .sheet(isPresented: $showNotifications) {
+            NotificationsView()
         }
     }
     
-    private var settingsButton: some View {
+    // Notifications button with unread count
+    private var notificationsButton: some View {
         Button(action: {
-            showSettings = true
+            showNotifications = true
         }) {
-            Image(systemName: "gear")
-                .imageScale(.large)
+            HStack(spacing: 4) {
+                Image(systemName: "bell.fill")
+                    .imageScale(.medium)
+                
+                if notificationsManager.unreadCount > 0 {
+                    Text("\(notificationsManager.unreadCount)")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(Color.red)
+                        .clipShape(Circle())
+                }
+            }
+            .foregroundColor(Color("AccentColor"))
         }
     }
 }

@@ -29,7 +29,7 @@ struct StatusMessageView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.yellow)
-                    Text("There has been rain. If your tyres leave a mark, stay off the trails.")
+                    Text("Recent rain detected - Never ride wet trails!")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.yellow)
                 }

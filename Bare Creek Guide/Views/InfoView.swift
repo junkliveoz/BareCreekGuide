@@ -4,41 +4,27 @@
 //
 //  Created by Adam on 27/2/2025.
 //  Updated on 3/3/2025.
+//  Updated on 4/3/2025 for simplified UI and satellite map view.
+//  Updated with correct park coordinates.
+//  Updated to fix deprecated MapKit APIs on 4/3/2025.
 //
 
 import SwiftUI
 import MapKit
 
 struct InfoView: View {
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: -33.734825, longitude: 151.231800),
-        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+    @State private var position = MapCameraPosition.region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: -33.71648, longitude: 151.20828),
+            span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        )
     )
     
     @State private var showMap = true
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 32) {
-                // Title and header image
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Bare Creek Info")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    
-                    Image("BareCreek-Info") // Main info image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 200)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }
-                .padding(.horizontal)
-                
-                // Park description
-                Text("Bare Creek Bike Park is one of only a few high flying freeride parks in Australia, and it's in the middle of Sydney of all places. Built in late 2019 on the site of a remediated rubbish tip, it's a council-run facility, and Bare Creek is free to access, offering ample opportunity for riders at every skill level to put some air underneath their tyres.")
-                    .font(.subheadline)
-                    .padding(.horizontal)
-                
+            VStack(alignment: .leading, spacing: 24) {
                 // Park Location
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Park Location")
@@ -46,17 +32,22 @@ struct InfoView: View {
                         .fontWeight(.bold)
                     
                     if showMap {
-                        Map(coordinateRegion: $region, annotationItems: [ParkLocation()]) { location in
-                            MapMarker(coordinate: location.coordinate, tint: .red)
+                        // Updated Map implementation using iOS 17 MapKit API
+                        Map(position: $position) {
+                            Marker("Bare Creek Bike Park", coordinate: CLLocationCoordinate2D(latitude: -33.71648, longitude: 151.20828))
+                                .tint(.red)
                         }
-                        .frame(height: 180)
+                        .mapStyle(.hybrid)
+                        .frame(height: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .onAppear {
-                            // Add a small delay to ensure the map loads properly
+                            // Slight adjustment to ensure map centers correctly
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                region = MKCoordinateRegion(
-                                    center: CLLocationCoordinate2D(latitude: -33.734825, longitude: 151.231800),
-                                    span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                                position = .region(
+                                    MKCoordinateRegion(
+                                        center: CLLocationCoordinate2D(latitude: -33.71648, longitude: 151.20828),
+                                        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                                    )
                                 )
                             }
                         }
@@ -180,7 +171,7 @@ struct InfoView: View {
                         Divider()
                         LinkButton(icon: "camera", title: "Instagram", url: "https://www.instagram.com/barecreektrailstatus/")
                         Divider()
-                        LinkButton(icon: "map", title: "Trail Maps", url: "https://www.barecreekbikepark.com/maps")
+                        LinkButton(icon: "map", title: "Trail Maps", url: "https://www.trailforks.com/region/bare-creek-bike-park-43315/")
                     }
                 }
                 .padding(.horizontal)
@@ -197,8 +188,8 @@ struct InfoView: View {
     }
     
     func openMapsWithDirections() {
-        let latitude: CLLocationDegrees = -33.734825
-        let longitude: CLLocationDegrees = 151.231800
+        let latitude: CLLocationDegrees = -33.71648
+        let longitude: CLLocationDegrees = 151.20828
         
         let regionDistance: CLLocationDistance = 1000
         let coordinates = CLLocationCoordinate2DMake(latitude, longitude)
@@ -218,7 +209,7 @@ struct InfoView: View {
 
 struct ParkLocation: Identifiable {
     let id = UUID()
-    let coordinate = CLLocationCoordinate2D(latitude: -33.734825, longitude: 151.231800)
+    let coordinate = CLLocationCoordinate2D(latitude: -33.71648, longitude: 151.20828)
 }
 
 struct LinkButton: View {

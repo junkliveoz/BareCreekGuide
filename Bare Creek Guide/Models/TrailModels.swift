@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 enum TrailDifficulty: String, CaseIterable, Identifiable {
     case green = "Green"
@@ -187,12 +188,14 @@ class TrailManager: ObservableObject {
     }
 }
 
+// Update the Trail struct to include coordinates
 struct Trail: Identifiable {
     let id: UUID
     let name: String
     let difficulty: TrailDifficulty
     let direction: TrailDirection
     let imageName: String
+    let coordinates: CLLocationCoordinate2D  // Added coordinates
     var statusMap: [ParkStatus: TrailStatus]
     var isFavorite: Bool = false
     var details: TrailDetail
@@ -201,6 +204,8 @@ struct Trail: Identifiable {
         return statusMap[parkStatus] ?? .closed
     }
     
+    // In the predefinedTrails array, you'll need to add coordinates to each trail.
+    // For example, for the Pump Track trail:
     static let predefinedTrails: [Trail] = [
         Trail(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID(),
@@ -208,6 +213,7 @@ struct Trail: Identifiable {
             difficulty: .blue,
             direction: .multiDirection,
             imageName: "Trails-PumpTrack",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71648, longitude: 151.20785),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -229,6 +235,7 @@ struct Trail: Identifiable {
             difficulty: .green,
             direction: .downhill,
             imageName: "Trails-FalconOath",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71638, longitude: 151.20781),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -250,6 +257,7 @@ struct Trail: Identifiable {
             difficulty: .blackDiamond,
             direction: .downhill,
             imageName: "Trails-Mild",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71598, longitude: 151.20765),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -271,6 +279,7 @@ struct Trail: Identifiable {
             difficulty: .blackDiamond,
             direction: .downhill,
             imageName: "Trails-Medium",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71599, longitude: 151.20762),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -292,6 +301,7 @@ struct Trail: Identifiable {
             difficulty: .doubleBlackDiamond,
             direction: .downhill,
             imageName: "Trails-Spicy",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71601, longitude: 151.20759),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .openWithSafetyOfficer,
@@ -313,6 +323,7 @@ struct Trail: Identifiable {
             difficulty: .blackDiamond,
             direction: .downhill,
             imageName: "Trails-SocialDistancing",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71509, longitude: 151.20720),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -334,6 +345,7 @@ struct Trail: Identifiable {
             difficulty: .doubleBlackDiamond,
             direction: .downhill,
             imageName: "Trails-Livewire",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71453, longitude: 151.20731),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .openWithSafetyOfficer,
@@ -355,6 +367,7 @@ struct Trail: Identifiable {
             difficulty: .blue,
             direction: .downhill,
             imageName: "Trails-TrashPanda",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71592, longitude: 151.20681),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -376,6 +389,7 @@ struct Trail: Identifiable {
             difficulty: .blue,
             direction: .downhill,
             imageName: "Trails-BinChicken",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71595, longitude: 151.20674),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -397,6 +411,7 @@ struct Trail: Identifiable {
             difficulty: .blue,
             direction: .downhill,
             imageName: "Trails-ShortCircuit",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71510, longitude: 151.20518),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -418,6 +433,7 @@ struct Trail: Identifiable {
             difficulty: .blackDiamond,
             direction: .downhill,
             imageName: "Trails-PowerTrip",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71507, longitude: 151.20518),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -439,6 +455,7 @@ struct Trail: Identifiable {
             difficulty: .proline,
             direction: .downhill,
             imageName: "Trails-Darcside",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71477, longitude: 151.20635),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .closed,
@@ -460,6 +477,7 @@ struct Trail: Identifiable {
             difficulty: .doubleBlackDiamond,
             direction: .downhill,
             imageName: "Trails-Blackout",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71502, longitude: 151.20518),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .closed,
@@ -481,6 +499,7 @@ struct Trail: Identifiable {
             difficulty: .proline,
             direction: .downhill,
             imageName: "Trails-WattsUp",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71491, longitude: 151.20506),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .closed,
@@ -502,6 +521,7 @@ struct Trail: Identifiable {
             difficulty: .green,
             direction: .uphill,
             imageName: "Trails-FourSeconds",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71459, longitude: 151.20737),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -523,6 +543,7 @@ struct Trail: Identifiable {
             difficulty: .green,
             direction: .uphill,
             imageName: "Trails-TheButler",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71499, longitude: 151.20680),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -544,6 +565,7 @@ struct Trail: Identifiable {
             difficulty: .green,
             direction: .uphill,
             imageName: "Trails-LightenUp",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71512, longitude: 151.20650),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,
@@ -565,6 +587,7 @@ struct Trail: Identifiable {
             difficulty: .green,
             direction: .uphill,
             imageName: "Trails-PowerBack",
+            coordinates: CLLocationCoordinate2D(latitude: -33.71545, longitude: 151.20574),
             statusMap: [
                 .closed: .closed,
                 .perfectConditions: .open,

@@ -3,6 +3,7 @@
 //  Bare Creek Safety Officer
 //
 //  Created by Adam on 23/2/2025.
+//  Updated to fix unused variable warning on 4/3/2025
 //
 
 import SwiftUI
@@ -24,10 +25,9 @@ struct HistoricalWeatherSection: View {
                     Spacer()
                 }
             } else {
-                // Fixed column widths
+                // Fixed column widths - removed unused dirWidth variable
                 let timeWidth: CGFloat = 70
                 let windWidth: CGFloat = 85
-                let dirWidth: CGFloat = 40
                 let rainWidth: CGFloat = 70
                 
                 // Table Header with properly aligned icons

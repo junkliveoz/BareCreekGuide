@@ -61,6 +61,7 @@ class NotificationSettings: ObservableObject {
     }
     
     @Published var notificationsAuthorized = false
+    @Published var checkingAuthorizationStatus = false
     
     private init() {
         // Load saved preferences
@@ -83,6 +84,7 @@ class NotificationSettings: ObservableObject {
     }
     
     func checkNotificationAuthorization() {
+        checkingAuthorizationStatus = true
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 self.notificationsAuthorized = settings.authorizationStatus == .authorized
@@ -91,11 +93,13 @@ class NotificationSettings: ObservableObject {
                 if settings.authorizationStatus != .authorized {
                     self.notificationsEnabled = false
                 }
+                self.checkingAuthorizationStatus = false
             }
         }
     }
     
-    func requestNotificationAuthorization() {
+    func requestNotificationAuthorization(completion: @escaping (Bool) -> Void) {
+        checkingAuthorizationStatus = true
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { success, error in
             DispatchQueue.main.async {
                 self.notificationsAuthorized = success
@@ -105,7 +109,15 @@ class NotificationSettings: ObservableObject {
                     self.notificationsEnabled = true
                     self.updateNotificationSettings()
                 }
+                self.checkingAuthorizationStatus = false
+                completion(success)
             }
+        }
+    }
+    
+    func openSystemSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
         }
     }
     
@@ -117,11 +129,12 @@ class NotificationSettings: ObservableObject {
 }
 
 struct SettingsView: View {
-    @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var notificationSettings = NotificationSettings.shared
+    @State private var showingAuthorizationAlert = false
+    @State private var authorizationSuccess = false
     
     var body: some View {
-        NavigationView {
+        ScrollView {
             VStack(spacing: 0) {
                 // Enable/Disable Notifications
                 VStack {
@@ -133,38 +146,14 @@ struct SettingsView: View {
                         .padding(.top, 24)
                         .padding(.bottom, 8)
                     
-                    Button(action: {
-                        if notificationSettings.notificationsAuthorized {
-                            // Toggle notifications on/off
-                            notificationSettings.notificationsEnabled.toggle()
-                        } else {
-                            // Request permission
-                            notificationSettings.requestNotificationAuthorization()
-                        }
-                    }) {
-                        HStack {
-                            Image(systemName: notificationSettings.notificationsEnabled ? "bell.fill" : "bell.slash")
-                                .foregroundColor(notificationSettings.notificationsEnabled ? Color("AccentColor") : .red)
-                                .font(.system(size: 24))
-                                .frame(width: 40)
-                            
-                            Text(notificationSettings.notificationsEnabled ? "Turn Off Notifications" : "Enable Notifications")
-                                .font(.title3)
-                                .fontWeight(.medium)
-                            
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color(.systemBackground))
-                        .cornerRadius(10)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    NotificationStatusCard()
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                 }
                 
                 // Notification Options
                 VStack {
-                    Text("ABOUT NOTIFICATIONS")
+                    Text("AVAILABLE NOTIFICATIONS")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -181,7 +170,7 @@ struct SettingsView: View {
                             title: "Perfect Conditions",
                             description: "Notify when wind gusts are 15kmh or below.",
                             isOn: $notificationSettings.notifyPerfectConditions,
-                            isEnabled: notificationSettings.notificationsEnabled
+                            isEnabled: notificationSettings.notificationsEnabled && notificationSettings.notificationsAuthorized
                         )
                         
                         // Rain Detection
@@ -191,7 +180,7 @@ struct SettingsView: View {
                             title: "Rain Detection",
                             description: "Notify when rain is detected at the weather station.",
                             isOn: $notificationSettings.notifyRain,
-                            isEnabled: notificationSettings.notificationsEnabled
+                            isEnabled: notificationSettings.notificationsEnabled && notificationSettings.notificationsAuthorized
                         )
                         
                         // Too Wet
@@ -201,7 +190,7 @@ struct SettingsView: View {
                             title: "Too Wet",
                             description: "Notify when rain exceeds 7mm over 2 days.",
                             isOn: $notificationSettings.notifyTooWet,
-                            isEnabled: notificationSettings.notificationsEnabled
+                            isEnabled: notificationSettings.notificationsEnabled && notificationSettings.notificationsAuthorized
                         )
                         
                         // Park Open/Closed
@@ -211,7 +200,7 @@ struct SettingsView: View {
                             title: "Park Open/Closed",
                             description: "Notify of park opening hours (6am to 5/7pm) and condition-based closures.",
                             isOn: $notificationSettings.notifyOpenClosed,
-                            isEnabled: notificationSettings.notificationsEnabled
+                            isEnabled: notificationSettings.notificationsEnabled && notificationSettings.notificationsAuthorized
                         )
                         
                         // Favorite Trails
@@ -221,7 +210,7 @@ struct SettingsView: View {
                             title: "Favorite Trails Updates",
                             description: "Notify when your favorite trails open or close, including trails that require a safety officer.",
                             isOn: $notificationSettings.notifyFavoriteTrails,
-                            isEnabled: notificationSettings.notificationsEnabled
+                            isEnabled: notificationSettings.notificationsEnabled && notificationSettings.notificationsAuthorized
                         )
                     }
                     .background(Color(.systemBackground))
@@ -237,15 +226,162 @@ struct SettingsView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 24)
                 
-                Spacer()
+                // App Information Section
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ABOUT THE APP")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                    
+                    // App version info
+                    HStack {
+                        Text("Version")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Text("1.6.2")
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    
+                }
+                .background(Color(.systemBackground))
+                .cornerRadius(10)
+                .padding(.horizontal)
+                
+                Spacer(minLength: 40)
             }
             .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
-            .navigationTitle("Settings")
-            .navigationBarItems(
-                trailing: Button("Done") {
-                    presentationMode.wrappedValue.dismiss()
+        }
+        .onAppear {
+            // Refresh permission status when view appears
+            notificationSettings.checkNotificationAuthorization()
+        }
+        .alert(isPresented: $showingAuthorizationAlert) {
+            if authorizationSuccess {
+                return Alert(
+                    title: Text("Notifications Enabled"),
+                    message: Text("You can now receive updates about park conditions and your favorite trails."),
+                    dismissButton: .default(Text("OK"))
+                )
+            } else {
+                return Alert(
+                    title: Text("Notifications Not Authorized"),
+                    message: Text("To receive notifications, please enable them in your device settings."),
+                    primaryButton: .default(Text("Open Settings"), action: {
+                        notificationSettings.openSystemSettings()
+                    }),
+                    secondaryButton: .cancel()
+                )
+            }
+        }
+    }
+}
+
+struct NotificationStatusCard: View {
+    @ObservedObject private var notificationSettings = NotificationSettings.shared
+    @State private var showingAuthorizationAlert = false
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack {
+                // Icon
+                Image(systemName: notificationSettings.notificationsAuthorized ? "bell.fill" : "bell.slash.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(notificationSettings.notificationsAuthorized ? Color("AccentColor") : .red)
+                    .frame(width: 40)
+                
+                // Status text
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(notificationSettings.notificationsAuthorized
+                        ? "Notifications \(notificationSettings.notificationsEnabled ? "Enabled" : "Disabled")"
+                        : "Notifications Not Authorized")
+                        .font(.headline)
+                    
+                    Text(notificationSettings.notificationsAuthorized
+                        ? (notificationSettings.notificationsEnabled
+                            ? "You will receive updates about park conditions."
+                            : "You will not receive any notifications.")
+                        : "Authorization required to receive notifications.")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+            }
+            
+            // Action button
+            Button(action: {
+                if notificationSettings.notificationsAuthorized {
+                    // Toggle notifications on/off
+                    notificationSettings.notificationsEnabled.toggle()
+                } else {
+                    // Request permission first time or direct to settings for subsequent requests
+                    notificationSettings.requestNotificationAuthorization { success in
+                        showingAuthorizationAlert = true
+                    }
+                }
+            }) {
+                Text(buttonLabel)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(buttonColor)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .opacity(notificationSettings.checkingAuthorizationStatus ? 0.7 : 1)
+            }
+            .disabled(notificationSettings.checkingAuthorizationStatus)
+            .overlay(
+                Group {
+                    if notificationSettings.checkingAuthorizationStatus {
+                        ProgressView()
+                    }
                 }
             )
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .cornerRadius(10)
+        .alert(isPresented: $showingAuthorizationAlert) {
+            if notificationSettings.notificationsAuthorized {
+                return Alert(
+                    title: Text("Notifications Enabled"),
+                    message: Text("You can now receive updates about park conditions and your favorite trails."),
+                    dismissButton: .default(Text("OK"))
+                )
+            } else {
+                return Alert(
+                    title: Text("Notifications Not Authorized"),
+                    message: Text("To receive notifications, please enable them in your device settings."),
+                    primaryButton: .default(Text("Open Settings"), action: {
+                        notificationSettings.openSystemSettings()
+                    }),
+                    secondaryButton: .cancel()
+                )
+            }
+        }
+    }
+    
+    private var buttonLabel: String {
+        if notificationSettings.checkingAuthorizationStatus {
+            return "Checking..."
+        } else if !notificationSettings.notificationsAuthorized {
+            return "Enable Notifications"
+        } else if notificationSettings.notificationsEnabled {
+            return "Turn Off Notifications"
+        } else {
+            return "Turn On Notifications"
+        }
+    }
+    
+    private var buttonColor: Color {
+        if !notificationSettings.notificationsAuthorized || !notificationSettings.notificationsEnabled {
+            return Color("AccentColor")
+        } else {
+            return .red
         }
     }
 }

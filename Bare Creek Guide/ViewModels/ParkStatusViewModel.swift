@@ -149,79 +149,78 @@ class ParkStatusViewModel: ObservableObject {
         )
     }
     
-    // Changed from private to public for background access
     public func calculateTwoDayRainTotal(_ weatherData: [WeatherData]) {
         let sortedData = weatherData.sorted { $0.local_date_time_full > $1.local_date_time_full }
         
-        // Get the latest valid rain reading for today (ignoring blank/"-" values)
-        var todayRain: Double = 0.0
-        var foundValidReading = false
-        
-        for entry in sortedData {
-            // Skip entries with blank/"-" rain values
-            if entry.rain_trace_string == "-" {
-                continue
-            }
-            
-            if let rainValue = Double(entry.rain_trace_string), rainValue >= 0 {
-                todayRain = rainValue
-                foundValidReading = true
-                break
-            }
-        }
-        
-        // If we didn't find any valid reading, default to 0
-        if !foundValidReading {
-            todayRain = 0.0
-        }
-        
-        // Calculate yesterday's date
+        // STEP 1: Find today's 9 AM reading, which represents rain accumulated since 9 AM yesterday
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMddHHmmss"
         
-        var yesterdayRain: Double = 0.0
+        var nineAMRain: Double = 0.0
         
+        // Look for today's 9 AM reading
         if let currentEntry = sortedData.first,
            let currentDate = dateFormatter.date(from: currentEntry.local_date_time_full) {
             
             let calendar = Calendar.current
-            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
-                // If we can't calculate yesterday, just use today's rain
-                twoDayRainTotal = todayRain
-                return
-            }
+            let currentYear = calendar.component(.year, from: currentDate)
+            let currentMonth = calendar.component(.month, from: currentDate)
+            let currentDay = calendar.component(.day, from: currentDate)
             
-            // Get yesterday's date components
-            let yesterdayYear = calendar.component(.year, from: yesterday)
-            let yesterdayMonth = calendar.component(.month, from: yesterday)
-            let yesterdayDay = calendar.component(.day, from: yesterday)
-            
-            // Find the highest valid rain reading from yesterday
+            // Find the 9 AM reading for today
             for entry in sortedData {
-                // Skip entries with blank/"-" rain values
-                if entry.rain_trace_string == "-" {
-                    continue
-                }
-                
-                if let entryDate = dateFormatter.date(from: entry.local_date_time_full),
-                   let rainValue = Double(entry.rain_trace_string) {
+                if let entryDate = dateFormatter.date(from: entry.local_date_time_full) {
+                    let entryHour = calendar.component(.hour, from: entryDate)
+                    let entryMinute = calendar.component(.minute, from: entryDate)
                     let entryYear = calendar.component(.year, from: entryDate)
                     let entryMonth = calendar.component(.month, from: entryDate)
                     let entryDay = calendar.component(.day, from: entryDate)
                     
-                    // Check if the entry is from yesterday
-                    if entryYear == yesterdayYear && entryMonth == yesterdayMonth && entryDay == yesterdayDay {
-                        // Get the highest rain value from yesterday
-                        if rainValue > yesterdayRain {
-                            yesterdayRain = rainValue
+                    // Check if this is today's 9 AM reading
+                    if entryYear == currentYear && entryMonth == currentMonth && entryDay == currentDay &&
+                       entryHour == 9 && entryMinute == 0 {
+                        
+                        // Get the 9 AM rain value
+                        if entry.rain_trace_string != "-" {
+                            nineAMRain = Double(entry.rain_trace_string) ?? 0.0
                         }
+                        break
+                    }
+                }
+            }
+        }
+        
+        // STEP 2: Find the highest rain reading after 9 AM today
+        var highestRainSince9AM: Double = 0.0
+        var nineAMTimestamp: String? = nil
+        
+        // First, find the 9 AM timestamp
+        for entry in sortedData {
+            if let entryDate = dateFormatter.date(from: entry.local_date_time_full) {
+                let entryHour = Calendar.current.component(.hour, from: entryDate)
+                let entryMinute = Calendar.current.component(.minute, from: entryDate)
+                
+                if entryHour == 9 && entryMinute == 0 {
+                    nineAMTimestamp = entry.local_date_time_full
+                    break
+                }
+            }
+        }
+        
+        // Then find the highest rain value after 9 AM
+        if let nineAMTimestamp = nineAMTimestamp {
+            for entry in sortedData {
+                // Only consider entries after 9 AM
+                if entry.local_date_time_full > nineAMTimestamp && entry.rain_trace_string != "-" {
+                    if let rainValue = Double(entry.rain_trace_string), rainValue > highestRainSince9AM {
+                        highestRainSince9AM = rainValue
                     }
                 }
             }
         }
         
         // Calculate the total
-        twoDayRainTotal = todayRain + yesterdayRain
-        print("Rain calculation: Today: \(todayRain), Yesterday: \(yesterdayRain), Total: \(twoDayRainTotal)")
+        twoDayRainTotal = nineAMRain + highestRainSince9AM
+        print("Rain calculation: 9 AM reading: \(nineAMRain), Highest since 9 AM: \(highestRainSince9AM), Total: \(twoDayRainTotal)")
     }
 }

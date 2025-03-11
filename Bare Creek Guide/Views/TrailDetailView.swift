@@ -2,45 +2,110 @@
 //  TrailDetailView.swift
 //  Bare Creek Guide
 //
-//  Created on 3/3/2025.
+//  Updated for MVVM architecture on 11/3/2025.
+//  Improved state sharing on 11/3/2025.
+//  Added rain warning on 11/3/2025.
 //
 
 import SwiftUI
+import MapKit
 
 struct TrailDetailView: View {
-    @Binding var trail: Trail
-    let parkStatus: ParkStatus
+    @StateObject private var viewModel: TrailDetailViewModel
     @Environment(\.presentationMode) var presentationMode
+    
+    init(trail: Binding<Trail>, parkStatus: ParkStatus) {
+        // Initialize the view model with the trail and status
+        // We don't need to pass the binding anymore since we're using the shared TrailManager
+        _viewModel = StateObject(wrappedValue: TrailDetailViewModel(
+            trail: trail.wrappedValue,
+            parkStatus: parkStatus
+        ))
+    }
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // Trail name header
-                Text(trail.name)
+                // Trail name header - now uses the computed property
+                Text(viewModel.trail.name)
                     .font(.system(size: 28, weight: .bold))
                     .padding(.horizontal)
                     .padding(.top, 8)
                 
-                // Hero image with rounded corners and favorite button
-                ZStack(alignment: .topTrailing) {
-                    Image(trail.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                // Hero image/map with rounded corners and buttons
+                ZStack(alignment: .top) {
+                    // Either show the image or the map
+                    if viewModel.showMap {
+                        // Map view
+                        Map(initialPosition: MapCameraPosition.region(viewModel.mapRegion)) {
+                            // Annotation for the trail
+                            Annotation(
+                                viewModel.trail.name,
+                                coordinate: viewModel.trail.coordinates,
+                                anchor: .bottom
+                            ) {
+                                VStack {
+                                    Image(systemName: "mappin")
+                                        .font(.title)
+                                        .foregroundColor(viewModel.trail.difficulty.color)
+                                    
+                                    Text(viewModel.trail.name)
+                                        .font(.caption)
+                                        .foregroundColor(.black)
+                                        .padding(4)
+                                        .background(Color.white.opacity(0.8))
+                                        .cornerRadius(4)
+                                }
+                            }
+                        }
+                        .mapStyle(.hybrid)
                         .frame(height: 200)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
-                    // Favorite button
-                    Button(action: {
-                        trail.isFavorite.toggle()
-                        // Storage is handled by the binding from TrailManager
-                    }) {
-                        Image(systemName: trail.isFavorite ? "heart.fill" : "heart")
-                            .foregroundColor(trail.isFavorite ? .red : .white)
-                            .padding(10)
-                            .background(Color.black.opacity(0.3))
-                            .clipShape(Circle())
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        )
+                    } else {
+                        // Trail image
+                        Image(viewModel.trail.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
                     }
-                    .padding(12)
+                    
+                    // Top row with map toggle and favorite buttons
+                    HStack {
+                        // Map toggle button
+                        Button(action: {
+                            viewModel.toggleMapView()
+                        }) {
+                            Image(systemName: viewModel.showMap ? "photo" : "map")
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.black.opacity(0.3))
+                                .clipShape(Circle())
+                        }
+                        .padding(12)
+                        
+                        Spacer()
+                        
+                        // Favorite button
+                        Button(action: {
+                            viewModel.toggleFavorite()
+                        }) {
+                            Image(systemName: viewModel.trail.isFavorite ? "heart.fill" : "heart")
+                                .foregroundColor(viewModel.trail.isFavorite ? .red : .white)
+                                .padding(10)
+                                .background(Color.black.opacity(0.3))
+                                .clipShape(Circle())
+                        }
+                        .padding(12)
+                    }
                 }
                 .padding(.horizontal)
                 
@@ -48,10 +113,10 @@ struct TrailDetailView: View {
                 HStack {
                     // Difficulty
                     HStack(spacing: 6) {
-                        trail.difficulty.displayIcon
+                        viewModel.trail.difficulty.displayIcon
                             .imageScale(.medium)
                         
-                        Text(trail.difficulty.rawValue)
+                        Text(viewModel.trail.difficulty.rawValue)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
@@ -60,8 +125,8 @@ struct TrailDetailView: View {
                     
                     // Direction
                     HStack(spacing: 6) {
-                        Image(systemName: trail.direction.icon)
-                        Text(trail.direction.rawValue)
+                        Image(systemName: viewModel.trail.direction.icon)
+                        Text(viewModel.trail.direction.rawValue)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
@@ -70,14 +135,32 @@ struct TrailDetailView: View {
                 .padding(.vertical, 8)
                 
                 // Status section
-                HStack {
-                    Image(systemName: trail.currentStatus(for: parkStatus).icon)
-                        .foregroundColor(trail.currentStatus(for: parkStatus).color)
-                        .font(.system(size: 20))
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: viewModel.currentStatus.icon)
+                            .foregroundColor(viewModel.currentStatus.color)
+                            .font(.system(size: 20))
+                        
+                        Text("Current Status: \(viewModel.currentStatus.rawValue)")
+                            .font(.headline)
+                            .foregroundColor(viewModel.currentStatus.color)
+                    }
                     
-                    Text("Current Status: \(trail.currentStatus(for: parkStatus).rawValue)")
-                        .font(.headline)
-                        .foregroundColor(trail.currentStatus(for: parkStatus).color)
+                    // Rain warning - only show when there's recent rain
+                    if viewModel.shouldShowRainWarning {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.yellow)
+                            Text("Recent rain detected - Never ride wet trails!")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.yellow)
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(Color.black.opacity(0.4))
+                        .cornerRadius(8)
+                        .padding(.top, 8)
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
@@ -86,7 +169,7 @@ struct TrailDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     SectionHeaderView(title: "Location", icon: "mappin.and.ellipse")
                     
-                    Text(trail.details.location)
+                    Text(viewModel.trail.details.location)
                         .font(.body)
                 }
                 .padding(.horizontal)
@@ -95,7 +178,7 @@ struct TrailDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     SectionHeaderView(title: "Overview", icon: "info.circle")
                     
-                    Text(trail.details.overview)
+                    Text(viewModel.trail.details.overview)
                         .font(.body)
                 }
                 .padding(.horizontal)
@@ -105,7 +188,7 @@ struct TrailDetailView: View {
                     SectionHeaderView(title: "Suitable Bikes", icon: "bicycle")
                     
                     HStack(spacing: 10) {
-                        ForEach(trail.details.suitableBikes, id: \.self) { bike in
+                        ForEach(viewModel.trail.details.suitableBikes, id: \.self) { bike in
                             Text(bike.rawValue)
                                 .font(.subheadline)
                                 .padding(.horizontal, 12)
@@ -122,7 +205,7 @@ struct TrailDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     SectionHeaderView(title: "Local Tips", icon: "lightbulb")
                     
-                    Text(trail.details.localsTips)
+                    Text(viewModel.trail.details.localsTips)
                         .font(.body)
                 }
                 .padding(.horizontal)
