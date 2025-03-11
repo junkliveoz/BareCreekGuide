@@ -3,12 +3,14 @@
 //  Bare Creek Safety Officer
 //
 //  Created by Adam on 23/2/2025.
+//  Updated to show 48-hour rain total on 12/3/2025
 //
 
 import SwiftUI
 
 struct CurrentWeatherSection: View {
     let weather: WeatherData?
+    let twoDayRainTotal: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
@@ -41,7 +43,7 @@ struct CurrentWeatherSection: View {
                     
                     // Wind Direction Box
                     VStack {
-                        Text("Direction")
+                        Text("Wind Direction")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -60,9 +62,9 @@ struct CurrentWeatherSection: View {
                             .fill(Color(.systemBackground))
                     )
                     
-                    // Rain Box
+                    // Rain Box - Updated to show 48-hour total
                     VStack {
-                        Text("Rain")
+                        Text("Rain (48h)")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -70,14 +72,9 @@ struct CurrentWeatherSection: View {
                         Spacer()
                         
                         VStack(spacing: 2) {
-                            // Display the raw value from BOM if it's a "-", otherwise format it
-                            if weather.rain_trace_string == "-" {
-                                Text("-")
-                                    .font(.title2)
-                            } else {
-                                Text("\(String(format: "%.1f", weather.rain_since_9am))")
-                                    .font(.title2)
-                            }
+                            Text("\(String(format: "%.1f", twoDayRainTotal))")
+                                .font(.title2)
+                                .foregroundColor(twoDayRainTotal > 7.0 ? .red : .primary)
                             Text("mm")
                                 .font(.subheadline)
                         }
@@ -105,4 +102,16 @@ struct CurrentWeatherSection: View {
                 .fill(Color(.secondarySystemBackground))
         )
     }
+}
+
+#Preview {
+    // Sample data for preview
+    let sampleWeather = WeatherData(
+        wind_gust_kmh: 15.2,
+        wind_dir: "SW",
+        local_date_time_full: "20250312105500",
+        rain_trace_string: "2.2"
+    )
+    
+    return CurrentWeatherSection(weather: sampleWeather, twoDayRainTotal: 9.4)
 }

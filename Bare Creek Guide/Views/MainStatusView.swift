@@ -3,6 +3,7 @@
 //  Bare Creek Safety Officer
 //
 //  Created by Adam on 22/2/2025.
+//  Updated to pass 48-hour rain total on 12/3/2025
 //
 
 import SwiftUI
@@ -32,7 +33,8 @@ struct ParkStatusView: View {
                 WeatherDataView(
                     currentWeather: viewModel.currentWeather,
                     weatherHistory: viewModel.weatherHistory,
-                    isLoading: viewModel.isLoading
+                    isLoading: viewModel.isLoading,
+                    twoDayRainTotal: viewModel.twoDayRainTotal
                 )
             }
             .padding(.horizontal)

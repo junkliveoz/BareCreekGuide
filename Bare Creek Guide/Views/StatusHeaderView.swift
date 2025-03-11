@@ -120,9 +120,9 @@ struct StatusHeaderView: View {
             Text("The wind conditions are too strong to be on the trails.")
             
         case .wetConditions:
-            HStack(spacing: 4) {
-                Text("The park is probably to wet to ride.")
-                Text("here")
+            VStack(alignment: .leading, spacing: 4) {
+                Text("The park is probably to wet to ride.  Never ride wet trails!")
+                Text("Check Instagram for latest information")
                     .foregroundColor(.blue)
                     .underline()
                     .onTapGesture {
