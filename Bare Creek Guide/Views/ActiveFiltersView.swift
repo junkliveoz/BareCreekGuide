@@ -3,6 +3,7 @@
 //  Bare Creek Guide
 //
 //  Created on 11/3/2025.
+//  Updated preview syntax on 12/3/2025.
 //
 
 import SwiftUI
@@ -120,7 +121,8 @@ struct ActiveFiltersView: View {
     viewModel.selectedDifficulty = .blue
     viewModel.showFavoritesOnly = true
     
-    return ActiveFiltersView(viewModel: viewModel)
-        .previewLayout(.sizeThatFits)
-        .padding()
+    return VStack {
+        ActiveFiltersView(viewModel: viewModel)
+            .padding()
+    }
 }

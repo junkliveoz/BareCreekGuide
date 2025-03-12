@@ -5,6 +5,7 @@
 //  Created on 11/3/2025.
 //  Improved for better state sharing on 11/3/2025
 //  Updated with rain warning feature on 11/3/2025
+//  Fixed map filtering on 12/3/2025
 //
 
 import SwiftUI
@@ -136,8 +137,8 @@ class TrailsViewModel: ObservableObject {
 
 /// ViewModel for the TrailsMapView
 class TrailsMapViewModel: NSObject, ObservableObject {
-    // Reference to the shared TrailManager
-    @ObservedObject var trailManager = TrailManager.shared
+    // Storage for filtered trails
+    @Published var filteredTrails: [Trail]
     
     @Published var parkStatus: ParkStatus
     @Published var mapStyleType: MapStyleType = .hybrid
@@ -147,11 +148,6 @@ class TrailsMapViewModel: NSObject, ObservableObject {
     private var locationManager: CLLocationManager!
     private var cancellables = Set<AnyCancellable>()
     
-    // Computed property to get trails from the shared manager
-    var trails: [Trail] {
-        return trailManager.trails
-    }
-    
     // Enum to handle map style
     enum MapStyleType {
         case standard
@@ -159,6 +155,7 @@ class TrailsMapViewModel: NSObject, ObservableObject {
     }
     
     init(trails: [Trail], parkStatus: ParkStatus) {
+        self.filteredTrails = trails
         self.parkStatus = parkStatus
         
         // Initialize camera position to park center
@@ -177,13 +174,14 @@ class TrailsMapViewModel: NSObject, ObservableObject {
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.distanceFilter = 10
-        
-        // Listen for changes to trails in TrailManager
-        self.trailManager.$trails
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-            .store(in: &cancellables)
+    }
+    
+    // Method to update filtered trails
+    func updateFilteredTrails(_ trails: [Trail]) {
+        self.filteredTrails = trails
+        if !trails.isEmpty {
+            setOptimalRegion()
+        }
     }
     
     func requestLocationPermission() {
@@ -214,7 +212,7 @@ class TrailsMapViewModel: NSObject, ObservableObject {
     /// Calculate the optimal region to show all trails
     func setOptimalRegion() {
         // Default to park center if no visible trails
-        if trails.isEmpty {
+        if filteredTrails.isEmpty {
             cameraPosition = .region(
                 MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: -33.71560, longitude: 151.20650),
@@ -225,12 +223,12 @@ class TrailsMapViewModel: NSObject, ObservableObject {
         }
         
         // Calculate the bounding box of all trail coordinates
-        var minLat = trails[0].coordinates.latitude
-        var maxLat = trails[0].coordinates.latitude
-        var minLon = trails[0].coordinates.longitude
-        var maxLon = trails[0].coordinates.longitude
+        var minLat = filteredTrails[0].coordinates.latitude
+        var maxLat = filteredTrails[0].coordinates.latitude
+        var minLon = filteredTrails[0].coordinates.longitude
+        var maxLon = filteredTrails[0].coordinates.longitude
         
-        for trail in trails {
+        for trail in filteredTrails {
             minLat = min(minLat, trail.coordinates.latitude)
             maxLat = max(maxLat, trail.coordinates.latitude)
             minLon = min(minLon, trail.coordinates.longitude)

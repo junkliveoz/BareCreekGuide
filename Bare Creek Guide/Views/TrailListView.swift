@@ -4,6 +4,7 @@
 //
 //  Created on 11/3/2025.
 //  Improved state sharing on 11/3/2025.
+//  Updated preview syntax on 12/3/2025.
 //
 
 import SwiftUI
@@ -121,9 +122,16 @@ struct TrailCard: View {
     }
 }
 
+// Preview wrapper to provide navigation context
+struct TrailListPreviewWrapper: View {
+    var body: some View {
+        NavigationView {
+            // Create a mock viewModel for preview
+            TrailListView(viewModel: TrailsViewModel(parkStatusViewModel: ParkStatusViewModel()))
+        }
+    }
+}
+
 #Preview {
-    // Create a mock viewModel for preview
-    let viewModel = TrailsViewModel(parkStatusViewModel: ParkStatusViewModel())
-    return TrailListView(viewModel: viewModel)
-        .previewLayout(.sizeThatFits)
+    TrailListPreviewWrapper()
 }

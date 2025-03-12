@@ -3,20 +3,14 @@
 //  Bare Creek Guide
 //
 //  Updated for MVVM architecture on 11/3/2025.
+//  Fixed filtering support on 12/3/2025.
 //
 
 import SwiftUI
 import MapKit
 
 struct TrailsMapView: View {
-    @StateObject private var viewModel: TrailsMapViewModel
-    
-    init(trails: [Trail], parkStatus: ParkStatus) {
-        _viewModel = StateObject(wrappedValue: TrailsMapViewModel(
-            trails: trails,
-            parkStatus: parkStatus
-        ))
-    }
+    @ObservedObject var viewModel: TrailsMapViewModel
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -30,8 +24,8 @@ struct TrailsMapView: View {
                     }
                 }
                 
-                // Add trail markers
-                ForEach(viewModel.trails) { trail in
+                // Add trail markers from filteredTrails (these will update when filtered)
+                ForEach(viewModel.filteredTrails) { trail in
                     Annotation(
                         trail.name,
                         coordinate: trail.coordinates,
@@ -95,10 +89,8 @@ struct TrailsMapView: View {
             // Request location permissions when the view appears
             viewModel.requestLocationPermission()
             
-            // If we have trails, calculate the best region to show all of them
-            if !viewModel.trails.isEmpty {
-                viewModel.setOptimalRegion()
-            }
+            // Calculate the best region to show all trails
+            viewModel.setOptimalRegion()
         }
     }
 }
@@ -147,7 +139,9 @@ struct TrailMarkerView: View {
 
 #Preview {
     TrailsMapView(
-        trails: Trail.predefinedTrails,
-        parkStatus: .perfectConditions
+        viewModel: TrailsMapViewModel(
+            trails: Trail.predefinedTrails,
+            parkStatus: .perfectConditions
+        )
     )
 }

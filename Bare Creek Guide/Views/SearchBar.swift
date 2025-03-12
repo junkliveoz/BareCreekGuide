@@ -34,11 +34,15 @@ struct SearchBar: View {
     }
 }
 
-#Preview {
-    // For preview purposes
-    @State var searchText = "Liv"
+struct SearchBarPreviewContainer: View {
+    @State private var searchText = "Liv"
     
-    return SearchBar(text: $searchText, placeholder: "Search trails")
-        .previewLayout(.sizeThatFits)
-        .padding()
+    var body: some View {
+        SearchBar(text: $searchText, placeholder: "Search trails")
+            .padding()
+    }
+}
+
+#Preview {
+    SearchBarPreviewContainer()
 }

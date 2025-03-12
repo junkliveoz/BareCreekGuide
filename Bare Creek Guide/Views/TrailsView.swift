@@ -3,16 +3,26 @@
 //  Bare Creek Guide
 //
 //  Updated for MVVM architecture on 11/3/2025.
+//  Fixed map filtering support on 12/3/2025.
+//  Updated onChange modifiers for iOS 17 on 12/3/2025.
 //
 
 import SwiftUI
 
 struct TrailsView: View {
     @StateObject private var viewModel: TrailsViewModel
+    @StateObject private var mapViewModel: TrailsMapViewModel
     
     init(parkStatusViewModel: ParkStatusViewModel) {
-        // Use StateObject to create the ViewModel
-        _viewModel = StateObject(wrappedValue: TrailsViewModel(parkStatusViewModel: parkStatusViewModel))
+        // Use StateObject to create the ViewModels
+        let trailsViewModel = TrailsViewModel(parkStatusViewModel: parkStatusViewModel)
+        _viewModel = StateObject(wrappedValue: trailsViewModel)
+        
+        // Initialize map view model with the filtered trails
+        _mapViewModel = StateObject(wrappedValue: TrailsMapViewModel(
+            trails: trailsViewModel.filteredTrails,
+            parkStatus: trailsViewModel.parkStatus
+        ))
     }
     
     var body: some View {
@@ -23,6 +33,9 @@ struct TrailsView: View {
                 SearchBar(text: $viewModel.searchText, placeholder: "Search trails")
                     .padding(.horizontal)
                     .padding(.vertical, 8)
+                    .onChange(of: viewModel.searchText) {
+                        updateMapFilters()
+                    }
                 
                 // Active filters summary (if any)
                 if viewModel.hasActiveFilters {
@@ -42,14 +55,30 @@ struct TrailsView: View {
                 
                 if viewModel.viewMode == .map {
                     // Trails map view
-                    TrailsMapView(
-                        trails: viewModel.filteredTrails,
-                        parkStatus: viewModel.parkStatus
-                    )
-                    .transition(.opacity)
+                    TrailsMapView(viewModel: mapViewModel)
+                        .transition(.opacity)
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: viewModel.viewMode)
+        }
+        // Individual observers for filter changes - iOS 17 syntax
+        .onChange(of: viewModel.selectedDifficulty) {
+            updateMapFilters()
+        }
+        .onChange(of: viewModel.selectedDirection) {
+            updateMapFilters()
+        }
+        .onChange(of: viewModel.selectedStatus) {
+            updateMapFilters()
+        }
+        .onChange(of: viewModel.selectedBike) {
+            updateMapFilters()
+        }
+        .onChange(of: viewModel.showFavoritesOnly) {
+            updateMapFilters()
+        }
+        .onChange(of: viewModel.sortOption) {
+            updateMapFilters()
         }
         .navigationTitle("Trails")
         .toolbar {
@@ -110,7 +139,20 @@ struct TrailsView: View {
         .background(Color(.systemBackground))
         .sheet(isPresented: $viewModel.showFilterSheet) {
             FilterSheetView(viewModel: viewModel)
+                .onDisappear {
+                    // Update map filters when the filter sheet is dismissed
+                    updateMapFilters()
+                }
         }
+        .onAppear {
+            // Initial update of map filters
+            updateMapFilters()
+        }
+    }
+    
+    // Helper function to update map filters
+    private func updateMapFilters() {
+        mapViewModel.updateFilteredTrails(viewModel.filteredTrails)
     }
 }
 
