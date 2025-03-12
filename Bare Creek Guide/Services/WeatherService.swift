@@ -32,7 +32,7 @@ class WeatherService: WeatherServiceProtocol {
                     throw URLError(.cannotParseResponse)
                 }
                 return response.observations.data
-                    .prefix(10)
+                    .prefix(50)
                     .sorted { $0.local_date_time_full > $1.local_date_time_full }
             }
             .receive(on: DispatchQueue.main)
@@ -53,7 +53,7 @@ class WeatherService: WeatherServiceProtocol {
         
         // Ensure consistent sorting
         return response.observations.data
-            .prefix(10)
+            .prefix(50)
             .sorted { $0.local_date_time_full > $1.local_date_time_full }
     }
 }

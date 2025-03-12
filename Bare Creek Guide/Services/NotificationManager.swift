@@ -6,6 +6,7 @@
 //  Updated on 4/3/2025.
 //  Updated with fixes for notification issues on 5/3/2025.
 //  Updated to fix duplicate notifications and badge count issues on 11/3/2025.
+//  Throttling mechanism removed on 12/3/2025.
 //
 
 import SwiftUI
@@ -35,9 +36,6 @@ class NotificationManager {
     private let lastParkOpenKey = "lastParkOpen"
     private let lastTrailStatusMapKey = "lastTrailStatusMap"
     private let lastNotificationTimeKey = "lastNotificationTime"
-    
-    // Minimum time between notifications (3 minutes)
-    private let minimumTimeBetweenNotifications: TimeInterval = 180
     
     // Flag to track if we've already sent a general park status notification
     private var sentParkStatusNotification = false
@@ -173,11 +171,7 @@ class NotificationManager {
             return
         }
         
-        // Check if we should throttle notifications
-        if !shouldSendNotification() {
-            print("Throttling notifications - too soon since last notification")
-            return
-        }
+        // No throttling - always allow notifications
         
         var sentNotification = false
         
@@ -213,12 +207,13 @@ class NotificationManager {
             trailStatuses: currentTrailStatuses
         )
         
-        // Update last notification time if we sent a notification
-        if sentNotification {
-            updateLastNotificationTime()
-        }
-        
         print("Sent notification: \(sentNotification)")
+    }
+    
+    // Always allow notifications to be sent (throttling removed)
+    private func shouldSendNotification() -> Bool {
+        // Always allow notifications to be sent
+        return true
     }
     
     // Combined Park Status Notification handler to avoid duplicates
@@ -431,34 +426,6 @@ class NotificationManager {
         }
         
         return sentNotification
-    }
-    
-    // Check if enough time has passed to send a notification
-    private func shouldSendNotification() -> Bool {
-        // Get the last notification time
-        let lastNotificationTime = UserDefaults.standard.double(forKey: lastNotificationTimeKey)
-        
-        // If last notification time is 0, it means we haven't sent any notifications yet
-        if lastNotificationTime == 0 {
-            print("No previous notification, allowing notification")
-            return true
-        }
-        
-        // Check if enough time has passed since the last notification
-        let now = Date().timeIntervalSince1970
-        let timeSinceLastNotification = now - lastNotificationTime
-        
-        print("Time since last notification: \(timeSinceLastNotification) seconds (minimum: \(minimumTimeBetweenNotifications))")
-        
-        return timeSinceLastNotification >= minimumTimeBetweenNotifications
-    }
-    
-    // Update the last notification time
-    private func updateLastNotificationTime() {
-        // Save the current time as the last notification time
-        let now = Date().timeIntervalSince1970
-        UserDefaults.standard.set(now, forKey: lastNotificationTimeKey)
-        print("Updated last notification time to: \(now)")
     }
     
     // Get current trail statuses for a given park status

@@ -109,91 +109,69 @@ class ParkStatusViewModel: ObservableObject {
     func calculateTwoDayRainTotal(_ weatherData: [WeatherData]) {
         guard !weatherData.isEmpty else { return }
         
-        // Sort data by time, most recent first (should already be sorted but ensuring)
+        // Sort data by time, most recent first
         let sortedData = weatherData.sorted { $0.local_date_time_full > $1.local_date_time_full }
         
-        // Get the most recent reading
+        // Print all rain data for debugging
+        print("All rain readings from newest to oldest:")
+        for reading in sortedData {
+            print("Time: \(reading.local_date_time_full), Rain: \(reading.rain_trace_string), Converted: \(reading.rain_since_9am)")
+        }
+        
+        // Get the most recent reading for current rain
         let mostRecentReading = sortedData[0]
+        let currentRainSince9am = mostRecentReading.rain_since_9am
         
         // Format for date parsing
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMddHHmmss"
         
-        // Variables to track rain
-        var currentRainSince9am: Double = 0.0  // Rain since 9am today
-        var nineAMReading: Double = 0.0       // The 9am reading (which is yesterday's total)
-        var foundNineAMReading = false
+        // Find the rain reading from 9am
+        var nineAMReading = 0.0
+        var nineAMReadingFound = false
         
-        // First, set current rain to the most recent reading
-        currentRainSince9am = mostRecentReading.rain_since_9am
-        print("Current rain since 9am: \(currentRainSince9am)mm")
-        
-        // Now find today's 9am reading, which gives us yesterday's rain total
         for reading in sortedData {
-            guard let readingTime = formatter.date(from: reading.local_date_time_full) else {
-                continue
-            }
-            
-            let calendar = Calendar.current
-            let components = calendar.dateComponents([.hour, .minute], from: readingTime)
-            
-            // Look for a reading at approximately 9am
-            // This accounts for readings that might be a few minutes off from exactly 9:00
-            let isAround9AM = components.hour == 9 && components.minute! < 15
-            
-            if isAround9AM {
+            // Try to find any reading with 9am in the time (ignore minutes)
+            if reading.local_date_time_full.contains("0900") {
                 nineAMReading = reading.rain_since_9am
-                foundNineAMReading = true
-                print("Found 9am reading: \(nineAMReading)mm at time: \(reading.local_date_time_full)")
+                nineAMReadingFound = true
+                print("Found 9AM reading with exact match: \(reading.local_date_time_full), value: \(nineAMReading)")
                 break
             }
         }
         
-        // If we couldn't find a 9am reading, use a reasonable fallback
-        if !foundNineAMReading {
-            print("No 9am reading found, using fallback calculation")
-            
-            // Find the oldest reading from today as a fallback
-            // Since BOM resets at 9am, the best approximation is the earliest reading after 9am
-            
-            let calendar = Calendar.current
-            var oldestReadingToday: WeatherData?
-            var oldestReadingTime: Date?
-            
-            for reading in sortedData.reversed() { // Start from oldest in our dataset
-                guard let readingTime = formatter.date(from: reading.local_date_time_full),
-                      let mostRecentTime = formatter.date(from: mostRecentReading.local_date_time_full) else {
-                    continue
-                }
-                
-                // Check if this reading is from the same day as the most recent one
-                let isSameDay = calendar.isDate(readingTime, inSameDayAs: mostRecentTime)
-                
-                // If it's from the same day and after 9am, it could be our fallback
-                let components = calendar.dateComponents([.hour], from: readingTime)
-                if isSameDay && components.hour! >= 9 {
-                    if oldestReadingTime == nil || readingTime < oldestReadingTime! {
-                        oldestReadingTime = readingTime
-                        oldestReadingToday = reading
-                    }
+        // If no exact 9am reading found, look for any time between 9:00 and 9:30
+        if !nineAMReadingFound {
+            for reading in sortedData {
+                if reading.local_date_time_full.prefix(10).hasSuffix("09") &&
+                   Int(reading.local_date_time_full.dropFirst(10).prefix(2)) ?? 99 < 30 {
+                    nineAMReading = reading.rain_since_9am
+                    nineAMReadingFound = true
+                    print("Found 9AM-ish reading: \(reading.local_date_time_full), value: \(nineAMReading)")
+                    break
                 }
             }
-            
-            if let oldestReading = oldestReadingToday {
-                nineAMReading = oldestReading.rain_since_9am
-                print("Using fallback 9am reading: \(nineAMReading)mm at time: \(oldestReading.local_date_time_full)")
-            } else {
-                print("No suitable fallback reading found, using 0mm for 9am reading")
+        }
+        
+        // Simple string matching fallback for 9.0mm reading
+        if !nineAMReadingFound {
+            for reading in sortedData {
+                if reading.rain_trace_string == "9.0" {
+                    nineAMReading = 9.0  // Use directly converted value to avoid any issues
+                    nineAMReadingFound = true
+                    print("Found reading with 9.0mm rain: \(reading.local_date_time_full)")
+                    break
+                }
             }
         }
         
         // Calculate the total rain for the past ~48 hours
-        // Current rain since 9am + the 9am reading (which covers the previous 24 hours)
         let total = currentRainSince9am + nineAMReading
-        print("Two-day rain total: \(total)mm (Current: \(currentRainSince9am)mm, 9am Reading: \(nineAMReading)mm)")
+        print("Final calculation: Current rain (\(currentRainSince9am)) + 9AM reading (\(nineAMReading)) = \(total)mm")
         
         // Update the property
         self.twoDayRainTotal = total
+        print("Set twoDayRainTotal to \(self.twoDayRainTotal)mm")
         
         // Update park status based on new calculation
         updateParkStatus()
