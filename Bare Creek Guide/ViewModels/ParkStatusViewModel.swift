@@ -244,3 +244,23 @@ class ParkStatusViewModel: ObservableObject {
         cancellables.removeAll()
     }
 }
+
+// Extend ParkStatusViewModel to conform to the protocol
+extension ParkStatusViewModel: ParkStatusViewModelProtocol {}
+
+extension ParkStatusViewModel {
+    // Setup watch connectivity
+    func setupWatchConnectivity() {
+        // Register with the connectivity manager
+        WatchConnectivityManager.shared.setParkStatusViewModel(self)
+        
+        // Add a subscription to send updates to the watch when values change
+        $parkStatus
+            .combineLatest($currentWeather, $twoDayRainTotal)
+            .sink { [weak self] _ in
+                // When key values change, update the watch
+                WatchConnectivityManager.shared.sendParkStatusToWatch()
+            }
+            .store(in: &cancellables)
+    }
+}

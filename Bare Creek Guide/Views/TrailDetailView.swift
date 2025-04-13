@@ -5,6 +5,7 @@
 //  Updated for MVVM architecture on 11/3/2025.
 //  Improved state sharing on 11/3/2025.
 //  Added rain warning on 11/3/2025.
+//  Fixed dark mode support on 18/3/2025.
 //
 
 import SwiftUI
@@ -13,6 +14,7 @@ import MapKit
 struct TrailDetailView: View {
     @StateObject private var viewModel: TrailDetailViewModel
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) private var colorScheme
     
     init(trail: Binding<Trail>, parkStatus: ParkStatus) {
         // Initialize the view model with the trail and status
@@ -223,7 +225,7 @@ struct TrailDetailView: View {
                     Image(systemName: "chevron.left")
                     Text("Back")
                 }
-                .foregroundColor(.black)
+                .foregroundColor(colorScheme == .dark ? .white : .black)
             }
         )
     }
@@ -232,6 +234,7 @@ struct TrailDetailView: View {
 struct SectionHeaderView: View {
     let title: String
     let icon: String
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(spacing: 8) {
@@ -240,6 +243,7 @@ struct SectionHeaderView: View {
             
             Text(title)
                 .font(.headline)
+                .foregroundColor(colorScheme == .dark ? .white : .primary)
         }
         .padding(.top, 6)
     }
@@ -254,4 +258,5 @@ struct SectionHeaderView: View {
             parkStatus: .perfectConditions
         )
     }
+    .preferredColorScheme(.dark) // Preview in dark mode
 }

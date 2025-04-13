@@ -7,23 +7,26 @@
 //  Updated to remove deprecated API warnings on 4/3/2025
 //  Updated to fix notification issues on 5/3/2025
 //  Updated to fix badge count issues on 11/3/2025
+//  Updated to fix WatchConnectivity issues on 7/4/2025
 //
 
 import SwiftUI
 import UserNotifications
 import BackgroundTasks
 import CloudKit
+import WatchConnectivity
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     // Background task identifiers
     private let backgroundFetchIdentifier = "com.barecreek.weatherfetch"
     private let backgroundRefreshIdentifier = "com.barecreek.weatherrefresh"
     
-    // Shared managers and services
+    // Shared managers and services - using shared singletons
     private let weatherService = WeatherService.shared
-    private let viewModel = ParkStatusViewModel.shared
+    private let parkStatusViewModel = ParkStatusViewModel.shared
     private let notificationManager = NotificationManager.shared
     private let favoritesStorageManager = FavoritesStorageManager.shared
+    private let watchConnectivityManager = WatchConnectivityManager.shared
     
     // Application launch method
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -45,6 +48,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Configure CloudKit
         configureCloudKit()
+        
+        // Set up watch connectivity
+        setupWatchConnectivity()
         
         // Check for a notification launch
         if let notification = launchOptions?[.remoteNotification] as? [String: AnyObject] {
@@ -114,6 +120,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         }
     }
     
+    // Set up watch connectivity
+    func setupWatchConnectivity() {
+        print("Setting up Watch connectivity")
+        
+        watchConnectivityManager.setParkStatusViewModel(parkStatusViewModel)
+    }
+    
+    // Update watch data when needed
+    func updateWatchData() {
+        watchConnectivityManager.sendParkStatusToWatch()
+    }
+    
     // Register background tasks
     private func registerBackgroundTasks() {
         // Register for background weather fetch
@@ -159,7 +177,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             try BGTaskScheduler.shared.submit(request)
             print("Background refresh scheduled successfully")
         } catch {
-            print("Could not schedule background refresh: \(error.localizedDescription)")
+            print("Could not schedule background refresh: \(error)")
         }
     }
     
@@ -184,16 +202,19 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 
                 // Update view model on main queue
                 await MainActor.run {
-                    self.viewModel.updateWeatherData(weatherData)
-                    self.viewModel.calculateTwoDayRainTotal(weatherData)
+                    self.parkStatusViewModel.updateWeatherData(weatherData)
+                    self.parkStatusViewModel.calculateTwoDayRainTotal(weatherData)
                     
                     // Process notifications
                     self.notificationManager.processWeatherUpdate(
                         currentWeather: weatherData.first,
-                        parkStatus: self.viewModel.parkStatus,
-                        twoDayRainTotal: self.viewModel.twoDayRainTotal,
-                        isParkOpen: self.viewModel.isParkOpenBasedOnTime
+                        parkStatus: self.parkStatusViewModel.parkStatus,
+                        twoDayRainTotal: self.parkStatusViewModel.twoDayRainTotal,
+                        isParkOpen: self.parkStatusViewModel.isParkOpenBasedOnTime
                     )
+                    
+                    // Send updated data to watch
+                    self.updateWatchData()
                 }
                 
                 print("Background fetch completed successfully")
@@ -226,19 +247,22 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 
                 // Update view model on main queue
                 await MainActor.run {
-                    self.viewModel.updateWeatherData(weatherData)
-                    self.viewModel.calculateTwoDayRainTotal(weatherData)
+                    self.parkStatusViewModel.updateWeatherData(weatherData)
+                    self.parkStatusViewModel.calculateTwoDayRainTotal(weatherData)
                     
                     // Process notifications
                     self.notificationManager.processWeatherUpdate(
                         currentWeather: weatherData.first,
-                        parkStatus: self.viewModel.parkStatus,
-                        twoDayRainTotal: self.viewModel.twoDayRainTotal,
-                        isParkOpen: self.viewModel.isParkOpenBasedOnTime
+                        parkStatus: self.parkStatusViewModel.parkStatus,
+                        twoDayRainTotal: self.parkStatusViewModel.twoDayRainTotal,
+                        isParkOpen: self.parkStatusViewModel.isParkOpenBasedOnTime
                     )
                     
                     // Sync favorites if needed
                     self.favoritesStorageManager.syncFavorites()
+                    
+                    // Send updated data to watch
+                    self.updateWatchData()
                 }
                 
                 print("Background refresh completed successfully")
@@ -370,7 +394,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Refresh weather data
         Task {
-            await viewModel.fetchLatestWeatherAsync()
+            await parkStatusViewModel.fetchLatestWeatherAsync()
         }
     }
     
@@ -379,7 +403,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // Refresh weather data
         Task {
-            await viewModel.fetchLatestWeatherAsync()
+            await parkStatusViewModel.fetchLatestWeatherAsync()
         }
         
         // Reset app badge based on actual unread count
@@ -391,6 +415,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 print("Set badge count to \(unreadCount)")
             }
         }
+        
+        // Update watch data
+        updateWatchData()
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {

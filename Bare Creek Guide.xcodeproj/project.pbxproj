@@ -6,33 +6,113 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6693D5422DA38FED005886A9 /* Bare Creek Guide Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6693D5352DA38FEC005886A9 /* Bare Creek Guide Watch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		66D9FB2D2DAC7C5F001C6C57 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6693D5692DA3CADF005886A9 /* WatchConnectivity.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6693D5402DA38FED005886A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 66AECC832D69C63700540817 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6693D5342DA38FEC005886A9;
+			remoteInfo = "Bare Creek Watch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6693D5432DA38FED005886A9 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				6693D5422DA38FED005886A9 /* Bare Creek Guide Watch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6693D5352DA38FEC005886A9 /* Bare Creek Guide Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bare Creek Guide Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6693D5692DA3CADF005886A9 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		66AECC8B2D69C63700540817 /* Bare Creek Guide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bare Creek Guide.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6693D55F2DA3A422005886A9 /* Exceptions for "Bare Creek Guide Watch App" folder in "Bare Creek Guide" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Utilities/WatchConnectivityManager.swift,
+			);
+			target = 66AECC8A2D69C63700540817 /* Bare Creek Guide */;
+		};
+		6693D5642DA3A5F9005886A9 /* Exceptions for "Bare Creek Guide" folder in "Bare Creek Guide Watch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/ParkStatusViewModelProtocol.swift,
+				Models/WeatherModels.swift,
+				Services/WeatherService.swift,
+				ViewModels/ParkStatusViewModel.swift,
+			);
+			target = 6693D5342DA38FEC005886A9 /* Bare Creek Guide Watch */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6693D5362DA38FEC005886A9 /* Bare Creek Guide Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6693D55F2DA3A422005886A9 /* Exceptions for "Bare Creek Guide Watch App" folder in "Bare Creek Guide" target */,
+			);
+			path = "Bare Creek Guide Watch App";
+			sourceTree = "<group>";
+		};
 		66AECC8D2D69C63700540817 /* Bare Creek Guide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6693D5642DA3A5F9005886A9 /* Exceptions for "Bare Creek Guide" folder in "Bare Creek Guide Watch" target */,
+			);
 			path = "Bare Creek Guide";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		66AECC882D69C63700540817 /* Frameworks */ = {
+		6693D5322DA38FEC005886A9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		66AECC882D69C63700540817 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66D9FB2D2DAC7C5F001C6C57 /* WatchConnectivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6693D5682DA3CADF005886A9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6693D5692DA3CADF005886A9 /* WatchConnectivity.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		66AECC822D69C63700540817 = {
 			isa = PBXGroup;
 			children = (
 				66AECC8D2D69C63700540817 /* Bare Creek Guide */,
+				6693D5362DA38FEC005886A9 /* Bare Creek Guide Watch App */,
+				6693D5682DA3CADF005886A9 /* Frameworks */,
 				66AECC8C2D69C63700540817 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				66AECC8B2D69C63700540817 /* Bare Creek Guide.app */,
+				6693D5352DA38FEC005886A9 /* Bare Creek Guide Watch.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +129,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6693D5342DA38FEC005886A9 /* Bare Creek Guide Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6693D5462DA38FED005886A9 /* Build configuration list for PBXNativeTarget "Bare Creek Guide Watch" */;
+			buildPhases = (
+				6693D5312DA38FEC005886A9 /* Sources */,
+				6693D5322DA38FEC005886A9 /* Frameworks */,
+				6693D5332DA38FEC005886A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6693D5362DA38FEC005886A9 /* Bare Creek Guide Watch App */,
+			);
+			name = "Bare Creek Guide Watch";
+			packageProductDependencies = (
+			);
+			productName = "Bare Creek Watch Watch App";
+			productReference = 6693D5352DA38FEC005886A9 /* Bare Creek Guide Watch.app */;
+			productType = "com.apple.product-type.application";
+		};
 		66AECC8A2D69C63700540817 /* Bare Creek Guide */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 66AECC992D69C63800540817 /* Build configuration list for PBXNativeTarget "Bare Creek Guide" */;
@@ -55,10 +158,12 @@
 				66AECC872D69C63700540817 /* Sources */,
 				66AECC882D69C63700540817 /* Frameworks */,
 				66AECC892D69C63700540817 /* Resources */,
+				6693D5432DA38FED005886A9 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6693D5412DA38FED005886A9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				66AECC8D2D69C63700540817 /* Bare Creek Guide */,
@@ -80,6 +185,9 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					6693D5342DA38FEC005886A9 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					66AECC8A2D69C63700540817 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -100,11 +208,19 @@
 			projectRoot = "";
 			targets = (
 				66AECC8A2D69C63700540817 /* Bare Creek Guide */,
+				6693D5342DA38FEC005886A9 /* Bare Creek Guide Watch */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6693D5332DA38FEC005886A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		66AECC892D69C63700540817 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +231,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6693D5312DA38FEC005886A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		66AECC872D69C63700540817 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +247,77 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6693D5412DA38FED005886A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6693D5342DA38FEC005886A9 /* Bare Creek Guide Watch */;
+			targetProxy = 6693D5402DA38FED005886A9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		6693D5442DA38FED005886A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_ASSET_PATHS = "\"Bare Creek Guide Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LCB8NQV3VV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bare Creek Guide";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "sayerft.Bare-Creek-Safety-Officer";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sayerft.Bare-Creek-Safety-Officer.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		6693D5452DA38FED005886A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_ASSET_PATHS = "\"Bare Creek Guide Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = LCB8NQV3VV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bare Creek Guide";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "sayerft.Bare-Creek-Safety-Officer";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sayerft.Bare-Creek-Safety-Officer.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
 		66AECC972D69C63800540817 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -251,7 +444,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Bare Creek Guide/Bare Creek Guide.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"Bare Creek Guide/Preview Content\"";
 				DEVELOPMENT_TEAM = LCB8NQV3VV;
 				ENABLE_PREVIEWS = YES;
@@ -262,13 +455,12 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "sayerft.Bare-Creek-Safety-Officer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -288,7 +480,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Bare Creek Guide/Bare Creek Guide.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"Bare Creek Guide/Preview Content\"";
 				DEVELOPMENT_TEAM = LCB8NQV3VV;
 				ENABLE_PREVIEWS = YES;
@@ -299,13 +491,12 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "sayerft.Bare-Creek-Safety-Officer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -321,6 +512,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6693D5462DA38FED005886A9 /* Build configuration list for PBXNativeTarget "Bare Creek Guide Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6693D5442DA38FED005886A9 /* Debug */,
+				6693D5452DA38FED005886A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		66AECC862D69C63700540817 /* Build configuration list for PBXProject "Bare Creek Guide" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

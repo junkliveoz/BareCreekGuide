@@ -4,27 +4,39 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-<<<<<<< HEAD
+		<key>Bare Creek Guide Combined.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>Bare Creek Guide.xcscheme_^#shared#^_</key>
-		<key>Bare Creek Safety Officer.xcscheme_^#shared#^_</key>
-=======
->>>>>>> main
-		<key>Bare Creek Safety Officer.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>Bare Creek Watch Watch App (Notification).xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Bare Creek Watch Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
-<<<<<<< HEAD
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>6693D5342DA38FEC005886A9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>66AECC8A2D69C63700540817</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 	</dict>
-=======
->>>>>>> main
 </dict>
 </plist>

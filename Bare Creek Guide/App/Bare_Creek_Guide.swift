@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WatchConnectivity
 
 @main
 struct Bare_Creek_GuideApp: App {
@@ -17,3 +18,4 @@ struct Bare_Creek_GuideApp: App {
         }
     }
 }
+

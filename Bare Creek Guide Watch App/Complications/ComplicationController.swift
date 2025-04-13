@@ -3,7 +3,7 @@
 //  Bare Creek Guide
 //
 //  Created by Adam on 7/4/2025.
-//  Updated on 7/4/2025 to fix text provider issues
+//  Updated to use modern complication initializers for watchOS 7+
 //
 
 import ClockKit
@@ -73,67 +73,81 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     
     func createTemplate(for family: CLKComplicationFamily, status: String, wind: String, colorString: String) -> CLKComplicationTemplate? {
         let color = self.colorFromString(colorString)
+        let bcTextProvider = CLKSimpleTextProvider(text: "BC")
+        let windTextProvider = CLKSimpleTextProvider(text: wind)
+        let windWithUnitTextProvider = CLKSimpleTextProvider(text: "\(wind) km/h")
+        let bareCreekTextProvider = CLKSimpleTextProvider(text: "Bare Creek")
+        let statusTextProvider = CLKSimpleTextProvider(text: status)
+        let windLabelTextProvider = CLKSimpleTextProvider(text: "Wind: \(wind) km/h")
         
         switch family {
         case .modularSmall:
-            let template = CLKComplicationTemplateModularSmallStackText()
-            template.line1TextProvider = CLKSimpleTextProvider(text: "BC")
-            template.line2TextProvider = CLKSimpleTextProvider(text: wind)
+            let template = CLKComplicationTemplateModularSmallStackText(
+                line1TextProvider: bcTextProvider,
+                line2TextProvider: windTextProvider
+            )
             template.tintColor = color
             return template
             
         case .modularLarge:
-            let template = CLKComplicationTemplateModularLargeStandardBody()
-            template.headerTextProvider = CLKSimpleTextProvider(text: "Bare Creek")
-            template.body1TextProvider = CLKSimpleTextProvider(text: status)
-            template.body2TextProvider = CLKSimpleTextProvider(text: "Wind: \(wind) km/h")
+            let template = CLKComplicationTemplateModularLargeStandardBody(
+                headerTextProvider: bareCreekTextProvider,
+                body1TextProvider: statusTextProvider,
+                body2TextProvider: windLabelTextProvider
+            )
             template.tintColor = color
             return template
             
         case .utilitarianSmall, .utilitarianSmallFlat:
-            let template = CLKComplicationTemplateUtilitarianSmallFlat()
-            template.textProvider = CLKSimpleTextProvider(text: "BC \(wind)")
+            let combinedTextProvider = CLKSimpleTextProvider(text: "BC \(wind)")
+            let template = CLKComplicationTemplateUtilitarianSmallFlat(
+                textProvider: combinedTextProvider
+            )
             template.tintColor = color
             return template
             
         case .utilitarianLarge:
-            let template = CLKComplicationTemplateUtilitarianLargeFlat()
-            template.textProvider = CLKSimpleTextProvider(text: "Bare Creek: \(wind) km/h")
+            let combinedTextProvider = CLKSimpleTextProvider(text: "Bare Creek: \(wind) km/h")
+            let template = CLKComplicationTemplateUtilitarianLargeFlat(
+                textProvider: combinedTextProvider
+            )
             template.tintColor = color
             return template
             
         case .circularSmall:
-            let template = CLKComplicationTemplateCircularSmallStackText()
-            template.line1TextProvider = CLKSimpleTextProvider(text: "BC")
-            template.line2TextProvider = CLKSimpleTextProvider(text: wind)
+            let template = CLKComplicationTemplateCircularSmallStackText(
+                line1TextProvider: bcTextProvider,
+                line2TextProvider: windTextProvider
+            )
             template.tintColor = color
             return template
             
         case .extraLarge:
-            let template = CLKComplicationTemplateExtraLargeStackText()
-            template.line1TextProvider = CLKSimpleTextProvider(text: "BC")
-            template.line2TextProvider = CLKSimpleTextProvider(text: wind)
+            let template = CLKComplicationTemplateExtraLargeStackText(
+                line1TextProvider: bcTextProvider,
+                line2TextProvider: windTextProvider
+            )
             template.tintColor = color
             return template
             
         case .graphicCorner:
-            let template = CLKComplicationTemplateGraphicCornerStackText()
-            template.innerTextProvider = CLKSimpleTextProvider(text: "BC")
-            template.outerTextProvider = CLKSimpleTextProvider(text: "\(wind) km/h")
-            return template
+            return CLKComplicationTemplateGraphicCornerStackText(
+                innerTextProvider: bcTextProvider,
+                outerTextProvider: windWithUnitTextProvider
+            )
             
         case .graphicCircular:
-            let template = CLKComplicationTemplateGraphicCircularStackText()
-            template.line1TextProvider = CLKSimpleTextProvider(text: "BC")
-            template.line2TextProvider = CLKSimpleTextProvider(text: wind)
-            return template
+            return CLKComplicationTemplateGraphicCircularStackText(
+                line1TextProvider: bcTextProvider,
+                line2TextProvider: windTextProvider
+            )
             
         case .graphicRectangular:
-            let template = CLKComplicationTemplateGraphicRectangularStandardBody()
-            template.headerTextProvider = CLKSimpleTextProvider(text: "Bare Creek")
-            template.body1TextProvider = CLKSimpleTextProvider(text: status)
-            template.body2TextProvider = CLKSimpleTextProvider(text: "Wind: \(wind) km/h")
-            return template
+            return CLKComplicationTemplateGraphicRectangularStandardBody(
+                headerTextProvider: bareCreekTextProvider,
+                body1TextProvider: statusTextProvider,
+                body2TextProvider: windLabelTextProvider
+            )
             
         default:
             return nil
@@ -144,8 +158,6 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     private func colorFromString(_ colorString: String) -> UIColor {
         switch colorString {
         case "green":
-            // Simply use standard colors - watchOS 6.0 is the minimum deployment
-            // target for modern Watch apps anyway
             return UIColor.green
         case "yellow":
             return UIColor.yellow

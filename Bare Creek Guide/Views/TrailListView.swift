@@ -5,6 +5,7 @@
 //  Created on 11/3/2025.
 //  Improved state sharing on 11/3/2025.
 //  Updated preview syntax on 12/3/2025.
+//  Fixed dark mode support on 18/3/2025.
 //
 
 import SwiftUI
@@ -43,6 +44,8 @@ struct TrailCard: View {
     let currentStatus: TrailStatus
     let isFavorite: Bool
     let onFavoriteToggle: () -> Void
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -118,7 +121,9 @@ struct TrailCard: View {
             .padding(.bottom, 6)
         }
         .padding(.bottom, 12)
-        .background(Color.white)
+        .background(Color(.systemBackground)) // Use system background color instead of hardcoded white
+        .cornerRadius(12) // Add corner radius to the whole card
+        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1) // Optional: adds a subtle shadow
     }
 }
 
@@ -129,6 +134,7 @@ struct TrailListPreviewWrapper: View {
             // Create a mock viewModel for preview
             TrailListView(viewModel: TrailsViewModel(parkStatusViewModel: ParkStatusViewModel()))
         }
+        .preferredColorScheme(.dark) // Add this to preview in dark mode
     }
 }
 

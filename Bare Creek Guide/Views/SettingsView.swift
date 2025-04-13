@@ -241,7 +241,7 @@ struct SettingsView: View {
                         Text("Version")
                             .foregroundColor(.primary)
                         Spacer()
-                        Text("1.6.6")
+                        Text("1.7.5")
                             .foregroundColor(.gray)
                     }
                     .padding()
