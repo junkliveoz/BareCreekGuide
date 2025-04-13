@@ -1,8 +1,9 @@
 //
 //  WatchContentView.swift
-//  Bare Creek Guide
+//  Bare Creek Watch Watch App
 //
 //  Created by Adam on 7/4/2025.
+//  Updated to rename from ContentView to avoid naming conflicts
 //
 
 import SwiftUI
@@ -15,6 +16,22 @@ struct WatchContentView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 12) {
+                    // Title with Last Reading Time
+                    VStack(spacing: 2) {
+                        Text("Park Status as of \(viewModel.formattedLastUpdatedTime())")
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        
+                        // Show stale data warning if needed
+                        if viewModel.isDataStale() {
+                            Text("Data may be outdated")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    .padding(.bottom, 5)
+                    
                     // Status Card
                     statusCard
                     
@@ -23,12 +40,6 @@ struct WatchContentView: View {
                     
                     // Rain Card
                     rainCard
-                    
-                    // Last Updated Text
-                    Text("Updated \(viewModel.timeAgoString())")
-                        .font(.caption2)
-                        .foregroundColor(.gray)
-                        .padding(.top, 5)
                 }
                 .padding(.horizontal)
             }
@@ -49,6 +60,9 @@ struct WatchContentView: View {
         )
         .onAppear {
             viewModel.requestUpdate()
+        }
+        .onDisappear {
+            viewModel.cleanup()
         }
         .refreshable {
             isRefreshing = true
@@ -156,6 +170,6 @@ struct WatchContentView: View {
 }
 
 #Preview {
-    ContentView()
+    WatchContentView()
         .environmentObject(WatchViewModel())
 }
